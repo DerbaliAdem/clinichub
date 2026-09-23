@@ -1,0 +1,34 @@
+# Dependencies
+**/node_modules/
+
+# Build output
+**/dist/
+**/build/
+
+# Environment variables
+**/.env
+**/.env.*
+!**/.env.example
+
+# Logs
+**/*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# Test coverage
+**/coverage/
+
+# Generated files
+**/src/generated/
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Tool-specific files
+**/.agents/
+**/.claude/
+**/.windsurf/

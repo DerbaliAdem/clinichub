@@ -1,0 +1,94 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  ADMIN
+  DOCTOR
+  PATIENT
+}
+
+enum AppointmentStatus {
+  PENDING
+  CONFIRMED
+  COMPLETED
+  CANCELLED
+}
+
+model User {
+  id           Int      @id @default(autoincrement())
+  email        String   @unique
+  passwordHash String
+  firstName    String
+  lastName     String
+  phone        String?
+  role         Role
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  doctor  Doctor?
+  patient Patient?
+}
+
+model Doctor {
+  id        Int    @id @default(autoincrement())
+  userId    Int    @unique
+  specialty String
+
+  user         User            @relation(fields: [userId], references: [id])
+  appointments Appointment[]
+  schedules    Schedule[]
+  records      MedicalRecord[]
+}
+
+model Patient {
+  id        Int       @id @default(autoincrement())
+  userId    Int       @unique
+  birthDate DateTime?
+  address   String?
+
+  user         User            @relation(fields: [userId], references: [id])
+  appointments Appointment[]
+  records      MedicalRecord[]
+}
+
+model Schedule {
+  id        Int    @id @default(autoincrement())
+  doctorId  Int
+  dayOfWeek Int
+  startTime String
+  endTime   String
+
+  doctor Doctor @relation(fields: [doctorId], references: [id])
+}
+
+model Appointment {
+  id        Int               @id @default(autoincrement())
+  doctorId  Int
+  patientId Int
+  date      DateTime
+  status    AppointmentStatus @default(PENDING)
+  reason    String?
+  createdAt DateTime          @default(now())
+
+  doctor  Doctor  @relation(fields: [doctorId], references: [id])
+  patient Patient @relation(fields: [patientId], references: [id])
+}
+
+model MedicalRecord {
+  id        Int      @id @default(autoincrement())
+  patientId Int
+  doctorId  Int
+  diagnosis String
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  patient Patient @relation(fields: [patientId], references: [id])
+  doctor  Doctor  @relation(fields: [doctorId], references: [id])
+}
